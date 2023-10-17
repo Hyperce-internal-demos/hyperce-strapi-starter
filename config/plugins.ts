@@ -5,7 +5,7 @@ export default ({ env }) => ({
       providerOptions: {
         key: env("AWS_SES_KEY"),
         secret: env("AWS_SES_SECRET"),
-        amazon: "https://email.ap-south-1.amazonaws.com",
+        amazon: `https://email.${env('AWS_REGION')}.amazonaws.com`,
       },
       settings: {
         defaultFrom: "Hyperce <noreply@hyperce.io>",
