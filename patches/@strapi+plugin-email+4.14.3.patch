@@ -1,0 +1,54 @@
+diff --git a/node_modules/@strapi/plugin-email/admin/src/pages/Settings/index.js b/node_modules/@strapi/plugin-email/admin/src/pages/Settings/index.js
+index df66bb1..fa69c1d 100644
+--- a/node_modules/@strapi/plugin-email/admin/src/pages/Settings/index.js
++++ b/node_modules/@strapi/plugin-email/admin/src/pages/Settings/index.js
+@@ -171,23 +171,9 @@ const SettingsPage = () => {
+                         {
+                           id: 'email.Settings.email.plugin.text.configuration',
+                           defaultMessage:
+-                            'The plugin is configured through the {file} file, checkout this {link} for the documentation.',
++                            'The plugin is configured through the {file} file.',
+                         },
+-                        {
+-                          file: './config/plugins.js',
+-                          link: (
+-                            <DocumentationLink
+-                              href="https://docs.strapi.io/developer-docs/latest/plugins/email.html"
+-                              target="_blank"
+-                              rel="noopener noreferrer"
+-                            >
+-                              {formatMessage({
+-                                id: 'email.link',
+-                                defaultMessage: 'Link',
+-                              })}
+-                            </DocumentationLink>
+-                          ),
+-                        }
++                        { file: '.env' }
+                       )}
+                     </Typography>
+                   </Flex>
+@@ -200,10 +186,7 @@ const SettingsPage = () => {
+                           id: 'email.Settings.email.plugin.label.defaultFrom',
+                           defaultMessage: 'Default sender email',
+                         })}
+-                        placeholder={formatMessage({
+-                          id: 'email.Settings.email.plugin.placeholder.defaultFrom',
+-                          defaultMessage: "ex: Strapi No-Reply '<'no-reply@strapi.io'>'",
+-                        })}
++			placeholder="ex: Hyperce No-Reply <no-reply@hyperce.io>"
+                         disabled
+                         onChange={() => {}}
+                         value={data.settings.defaultFrom}
+@@ -217,10 +200,7 @@ const SettingsPage = () => {
+                           id: 'email.Settings.email.plugin.label.defaultReplyTo',
+                           defaultMessage: 'Default response email',
+                         })}
+-                        placeholder={formatMessage({
+-                          id: 'email.Settings.email.plugin.placeholder.defaultReplyTo',
+-                          defaultMessage: `ex: Strapi '<'example@strapi.io'>'`,
+-                        })}
++			placeholder="ex: Hyperce <example@hyperce.io>"
+                         disabled
+                         onChange={() => {}}
+                         value={data.settings.defaultReplyTo}

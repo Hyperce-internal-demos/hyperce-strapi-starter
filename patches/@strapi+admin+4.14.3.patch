@@ -1,0 +1,175 @@
+diff --git a/node_modules/@strapi/admin/admin/src/StrapiApp.js b/node_modules/@strapi/admin/admin/src/StrapiApp.js
+index bbe0ef2..e1503cd 100644
+--- a/node_modules/@strapi/admin/admin/src/StrapiApp.js
++++ b/node_modules/@strapi/admin/admin/src/StrapiApp.js
+@@ -34,10 +34,10 @@ class StrapiApp {
+       head: { favicon },
+       locales: ['en'],
+       menuLogo: Logo,
+-      notifications: { releases: true },
++      notifications: { releases: false },
+       themes: { light: lightTheme, dark: darkTheme },
+       translations: {},
+-      tutorials: true,
++      tutorials: false,
+     };
+     this.appPlugins = appPlugins || {};
+     this.library = library;
+@@ -232,9 +232,6 @@ class StrapiApp {
+       const lightTheme = this.customConfigurations.theme.light;
+ 
+       if (!darkTheme && !lightTheme) {
+-        console.warn(
+-          `[deprecated] In future versions, Strapi will stop supporting this theme customization syntax. The theme configuration accepts a light and a dark key to customize each theme separately. See https://docs.strapi.io/developer-docs/latest/development/admin-customization.html#theme-extension.`
+-        );
+         merge(this.configurations.themes.light, this.customConfigurations.theme);
+       }
+ 
+diff --git a/node_modules/@strapi/admin/admin/src/components/AuthenticatedApp/index.js b/node_modules/@strapi/admin/admin/src/components/AuthenticatedApp/index.js
+index 10c5073..b3f23a2 100644
+--- a/node_modules/@strapi/admin/admin/src/components/AuthenticatedApp/index.js
++++ b/node_modules/@strapi/admin/admin/src/components/AuthenticatedApp/index.js
+@@ -24,7 +24,6 @@ import {
+   fetchStrapiLatestRelease,
+   fetchUserRoles,
+ } from './utils/api';
+-import checkLatestStrapiVersion from './utils/checkLatestStrapiVersion';
+ 
+ const strapiVersion = packageJSON.version;
+ 
+@@ -60,7 +59,6 @@ const AuthenticatedApp = () => {
+     },
+   ]);
+ 
+-  const shouldUpdateStrapi = checkLatestStrapiVersion(strapiVersion, tagName);
+ 
+   /**
+    * TODO: does this actually need to be an effect?
+@@ -106,7 +104,6 @@ const AuthenticatedApp = () => {
+       userId={userId}
+       latestStrapiReleaseTag={tagName}
+       setUserDisplayName={setUserDisplayName}
+-      shouldUpdateStrapi={shouldUpdateStrapi}
+       userDisplayName={userDisplayName}
+     >
+       <RBACProvider permissions={permissions} refetchPermissions={refetch}>
+diff --git a/node_modules/@strapi/admin/admin/src/components/GlobalStyle/index.js b/node_modules/@strapi/admin/admin/src/components/GlobalStyle/index.js
+index 8813621..125d67c 100644
+--- a/node_modules/@strapi/admin/admin/src/components/GlobalStyle/index.js
++++ b/node_modules/@strapi/admin/admin/src/components/GlobalStyle/index.js
+@@ -5,5 +5,5 @@ const GlobalStyle = createGlobalStyle`
+     background: ${({ theme }) => theme.colors.neutral100};
+   }
+ `;
+-
++``
+ export default GlobalStyle;
+diff --git a/node_modules/@strapi/admin/admin/src/hooks/useMenu/index.js b/node_modules/@strapi/admin/admin/src/hooks/useMenu/index.js
+index 34d1766..829962e 100644
+--- a/node_modules/@strapi/admin/admin/src/hooks/useMenu/index.js
++++ b/node_modules/@strapi/admin/admin/src/hooks/useMenu/index.js
+@@ -25,15 +25,6 @@ const useMenu = () => {
+         to: '/list-plugins',
+         permissions: permissions.marketplace.main,
+       },
+-      {
+-        icon: ShoppingCart,
+-        intlLabel: {
+-          id: 'global.marketplace',
+-          defaultMessage: 'Marketplace',
+-        },
+-        to: '/marketplace',
+-        permissions: permissions.marketplace.main,
+-      },
+       {
+         icon: Cog,
+         intlLabel: {
+diff --git a/node_modules/@strapi/admin/admin/src/pages/Admin/index.js b/node_modules/@strapi/admin/admin/src/pages/Admin/index.js
+index de3f0d8..3adca4d 100644
+--- a/node_modules/@strapi/admin/admin/src/pages/Admin/index.js
++++ b/node_modules/@strapi/admin/admin/src/pages/Admin/index.js
+@@ -24,13 +24,9 @@ import Onboarding from './Onboarding';
+ const CM = lazy(() =>
+   import(/* webpackChunkName: "content-manager" */ '../../content-manager/pages/App')
+ );
+-const HomePage = lazy(() => import(/* webpackChunkName: "Admin_homePage" */ '../HomePage'));
+ const InstalledPluginsPage = lazy(() =>
+   import(/* webpackChunkName: "Admin_pluginsPage" */ '../InstalledPluginsPage')
+ );
+-const MarketplacePage = lazy(() =>
+-  import(/* webpackChunkName: "Admin_marketplace" */ '../MarketplacePage')
+-);
+ const NotFoundPage = lazy(() =>
+   import(/* webpackChunkName: "Admin_NotFoundPage" */ '../NotFoundPage')
+ );
+@@ -97,15 +93,12 @@ const Admin = () => {
+       >
+         <Suspense fallback={<LoadingIndicatorPage />}>
+           <Switch>
+-            <Route path="/" component={HomePage} exact />
++            <Route path="/" component={CM} exact />
+             <Route path="/me" component={ProfilePage} exact />
+             <Route path="/content-manager" component={CM} />
+             {routes}
+             <Route path="/settings/:settingId" component={SettingsPage} />
+             <Route path="/settings" component={SettingsPage} exact />
+-            <Route path="/marketplace">
+-              <MarketplacePage />
+-            </Route>
+             <Route path="/list-plugins" exact>
+               <InstalledPluginsPage />
+             </Route>
+diff --git a/node_modules/@strapi/admin/admin/src/pages/SettingsPage/pages/ApplicationInfosPage/index.js b/node_modules/@strapi/admin/admin/src/pages/SettingsPage/pages/ApplicationInfosPage/index.js
+index d863c00..003814a 100644
+--- a/node_modules/@strapi/admin/admin/src/pages/SettingsPage/pages/ApplicationInfosPage/index.js
++++ b/node_modules/@strapi/admin/admin/src/pages/SettingsPage/pages/ApplicationInfosPage/index.js
+@@ -231,36 +231,6 @@ const ApplicationInfosPage = () => {
+                         )}
+                       </Flex>
+                     </GridItem>
+-                    <GridItem col={6} s={12}>
+-                      <Typography variant="sigma" textColor="neutral600" as="dt">
+-                        {formatMessage({
+-                          id: 'Settings.application.edition-title',
+-                          defaultMessage: 'current plan',
+-                        })}
+-                      </Typography>
+-                      <Flex gap={3} direction="column" alignItems="start" as="dd">
+-                        <Typography>
+-                          {formatMessage(
+-                            {
+-                              id: 'Settings.application.ee-or-ce',
+-                              defaultMessage:
+-                                '{communityEdition, select, true {Community Edition} other {Enterprise Edition}}',
+-                            },
+-                            { communityEdition }
+-                          )}
+-                        </Typography>
+-                        <Link
+-                          href="https://strapi.io/pricing-self-hosted"
+-                          isExternal
+-                          endIcon={<ExternalLink />}
+-                        >
+-                          {formatMessage({
+-                            id: 'Settings.application.link-pricing',
+-                            defaultMessage: 'See all pricing plans',
+-                          })}
+-                        </Link>
+-                      </Flex>
+-                    </GridItem>
+ 
+                     <GridItem col={6} s={12}>
+                       <Typography variant="sigma" textColor="neutral600" as="dt">
+diff --git a/node_modules/@strapi/admin/index.html b/node_modules/@strapi/admin/index.html
+index a00a161..80b01a0 100644
+--- a/node_modules/@strapi/admin/index.html
++++ b/node_modules/@strapi/admin/index.html
+@@ -6,7 +6,7 @@
+     <!-- Make the page mobile compatible -->
+     <meta name="viewport" content="width=device-width, initial-scale=1" />
+     <meta name="mobile-web-app-capable" content="yes" />
+-    <title>Strapi Admin</title>
++    <title>Hyperce Admin</title>
+   </head>
+   <body>
+     <!-- The app hooks into this div -->
